@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  category_id   String    @id @db.VarChar(255)
+  category_name String?   @db.VarChar(255)
+  courses       courses[]
+}
+
+model comments {
+  comment_id      Int       @id @default(autoincrement())
+  comment_content String?   @db.Text
+  created_date    DateTime? @db.Timestamp(0)
+  user_id         Int
+  course_id       Int
+  users           users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "comments_ibfk_1")
+  courses         courses   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "comments_ibfk_2")
+
+  @@index([course_id], map: "course_id")
+  @@index([user_id], map: "user_id")
+}
+
+model course_enrollment {
+  enrollment_id Int       @id @default(autoincrement())
+  created_date  DateTime? @db.Timestamp(0)
+  status        Int?
+  user_id       Int
+  course_id     Int
+  users         users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "course_enrollment_ibfk_1")
+  courses       courses   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "course_enrollment_ibfk_2")
+
+  @@index([course_id], map: "course_id")
+  @@index([user_id], map: "user_id")
+}
+
+model courses {
+  course_id          Int                 @id @default(autoincrement())
+  aliases            String?             @db.VarChar(255)
+  course_name        String?             @db.VarChar(255)
+  description        String?             @db.Text
+  views              Int?
+  image              String?             @db.VarChar(1000)
+  group_code         String?             @db.VarChar(50)
+  created_date       DateTime?           @db.Timestamp(0)
+  number_of_students Int?
+  user_id            Int
+  category_id        String              @db.VarChar(255)
+  comments           comments[]
+  course_enrollment  course_enrollment[]
+  users              users               @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "courses_ibfk_1")
+  categories         categories          @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "courses_ibfk_2")
+
+  @@index([category_id], map: "category_id")
+  @@index([user_id], map: "user_id")
+}
+
+model users {
+  user_id           Int                 @id @default(autoincrement())
+  account           String?             @db.VarChar(1000)
+  full_name         String?             @db.VarChar(1000)
+  email             String?             @db.VarChar(1000)
+  phone             String?             @db.VarChar(1000)
+  pass_word         String?             @db.VarChar(1000)
+  user_type_code    String?             @db.VarChar(255)
+  user_type_name    String?             @db.VarChar(255)
+  group_code        String?             @db.VarChar(50)
+  birthday          String?             @db.VarChar(50)
+  avatar            String?             @db.VarChar(1000)
+  face_app_id       String?             @db.VarChar(255)
+  refresh_token     String?             @db.Text
+  comments          comments[]
+  course_enrollment course_enrollment[]
+  courses           courses[]
+}
