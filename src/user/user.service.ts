@@ -69,6 +69,19 @@ export class UserService {
           userId: checkAccount.user_id,
         });
 
+        const tokenRef = await this.jwt.createTokenRef({
+          userId: checkAccount.user_id,
+        });
+
+        await this.prisma.users.update({
+          where: {
+            user_id: checkAccount.user_id,
+          },
+          data: {
+            refresh_token: tokenRef,
+          },
+        });
+
         const format = {
           account: checkAccount.account,
           password: password,
@@ -135,10 +148,36 @@ export class UserService {
 
     const { userId } = req.user;
     // console.log('🚀 ~ UserService ~ refreshToken ~ userId:', userId);
-    const verifyToken = req.user;
-    // console.log("🚀 ~ UserService ~ refreshToken ~ verifyToken:", verifyToken);
 
-    responseData(res, 200, 'Token is authorized', userId);
+    // Bước nếu token lỗi và lỗi tên thì trả responseData trả lỗi, jwtStrategy đã làm rồi.
+
+    const getUser = await this.prisma.users.findUnique({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    if (!getUser) {
+      responseData(res, 401, 'User not found', '');
+      return;
+    }
+
+    const verifyToken = req.user;
+    console.log("🚀 ~ UserService ~ refreshToken ~ verifyToken:", verifyToken)
+
+    const { key } = this.jwt.decodeTokenRef(getUser.refresh_token);
+    console.log("🚀 ~ UserService ~ refreshToken ~ key:", key)
+
+    // if (verifyToken.key != key) {
+    //   responseData(res, 401, 'Token is not authorized', '');
+    //   return;
+    // }
+
+    const newToken = this.jwt.createToken({
+      userId: getUser.user_id,
+    });
+
+    responseData(res, 200, 'The token is refreshed', newToken);
   }
 
   findOne(id: number) {

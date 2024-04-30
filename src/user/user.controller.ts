@@ -43,6 +43,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt-refresh'))
   @Post('/RefreshToken')
   refreshToken(
     @Headers() headers: HeadersToken,
