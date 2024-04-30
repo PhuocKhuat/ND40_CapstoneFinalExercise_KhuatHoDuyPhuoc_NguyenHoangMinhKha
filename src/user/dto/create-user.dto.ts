@@ -11,3 +11,7 @@ export class Signup {
   birthday: string;
   phone: string;
 }
+
+export class HeadersToken {
+  authorization: string;
+}

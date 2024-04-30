@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Login, Signup } from './dto/create-user.dto';
+import { HeadersToken, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
@@ -8,7 +8,7 @@ import Jwt from 'src/configs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private jwt: Jwt){}
+  constructor(private jwt: Jwt) {}
 
   prisma = new PrismaClient();
 
@@ -65,7 +65,9 @@ export class UserService {
       }
 
       if (bcrypt.compareSync(password, checkAccount.pass_word)) {
-        const token = await this.jwt.createToken({userId: checkAccount.user_id});
+        const token = await this.jwt.createToken({
+          userId: checkAccount.user_id,
+        });
 
         const format = {
           account: checkAccount.account,
@@ -124,6 +126,19 @@ export class UserService {
     };
 
     responseData(res, 200, 'Signup successfully', format);
+  }
+
+  // refreshToken
+  async refreshToken(headers: HeadersToken, req: any, res: Response) {
+    const { authorization } = headers;
+    // console.log('🚀 ~ UserService ~ refreshToken ~ token:', authorization);
+
+    const { userId } = req.user;
+    // console.log('🚀 ~ UserService ~ refreshToken ~ userId:', userId);
+    const verifyToken = req.user;
+    // console.log("🚀 ~ UserService ~ refreshToken ~ verifyToken:", verifyToken);
+
+    responseData(res, 200, 'Token is authorized', userId);
   }
 
   findOne(id: number) {

@@ -8,9 +8,11 @@ import {
   Delete,
   Res,
   UseGuards,
+  Headers,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Login, Signup } from './dto/create-user.dto';
+import { HeadersToken, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -38,6 +40,16 @@ export class UserController {
   @Post('/Signup')
   signup(@Res() res: Response, @Body() signup: Signup) {
     return this.userService.signup(res, signup);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/RefreshToken')
+  refreshToken(
+    @Headers() headers: HeadersToken,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    return this.userService.refreshToken(headers, req, res);
   }
 
   @Get(':id')

@@ -14,4 +14,5 @@ export default class Jwt {
       expiresIn: '5d',
     });
   }
+  createTokenRef() {}
 }

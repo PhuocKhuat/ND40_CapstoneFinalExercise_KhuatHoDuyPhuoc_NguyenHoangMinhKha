@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: configService.get('SECRET_KEY'),
     });
   }
-  async validate(decodeToken: any) {
-    return decodeToken;
+  async validate(payload: any) {
+    return payload;
   }
 }
