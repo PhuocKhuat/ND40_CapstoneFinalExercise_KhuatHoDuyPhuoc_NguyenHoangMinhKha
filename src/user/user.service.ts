@@ -166,12 +166,11 @@ export class UserService {
     console.log("🚀 ~ UserService ~ refreshToken ~ verifyToken:", verifyToken)
 
     const { key } = this.jwt.decodeTokenRef(getUser.refresh_token);
-    console.log("🚀 ~ UserService ~ refreshToken ~ key:", key)
 
-    // if (verifyToken.key != key) {
-    //   responseData(res, 401, 'Token is not authorized', '');
-    //   return;
-    // }
+    if (verifyToken.key != key) {
+      responseData(res, 401, 'Token is not authorized', '');
+      return;
+    }
 
     const newToken = this.jwt.createToken({
       userId: getUser.user_id,
