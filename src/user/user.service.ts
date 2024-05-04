@@ -14,26 +14,21 @@ export class UserService {
 
   // getUserList
   async getUserList(res: Response) {
-    try {
-      const userList = await this.prisma.users.findMany();
+    const userList = await this.prisma.users.findMany();
 
-      const formatUserList = userList.map((user) => ({
-        account: user.account,
-        fullName: user.full_name,
-        email: user.email,
-        phoneNumber: user.phone,
-        password: user.pass_word,
-        birthday: user.birthday,
-        userTypeCode: user.user_type_code,
-        userTypeName: user.user_type_name,
-        avatar: user.avatar,
-        refreshToken: user.refresh_token,
-      }));
+    const formatUserList = userList.map((user) => ({
+      account: user.account,
+      fullName: user.full_name,
+      email: user.email,
+      phoneNumber: user.phone,
+      password: user.pass_word,
+      birthday: user.birthday,
+      userTypeCode: user.user_type_code,
+      userTypeName: user.user_type_name,
+      avatar: user.avatar,
+    }));
 
-      return responseData(res, 200, 'Proceed successfully', formatUserList);
-    } catch (error) {
-      console.log('🚀 ~ UserService ~ getUserList ~ error:', error);
-    }
+    return responseData(res, 200, 'Proceed successfully', formatUserList);
   }
 
   // getUserTypeList
@@ -50,52 +45,48 @@ export class UserService {
 
   // login
   async login(res: Response, login: Login) {
-    try {
-      const { account, password } = login;
+    const { account, password } = login;
 
-      const checkAccount = await this.prisma.users.findFirst({
+    const checkAccount = await this.prisma.users.findFirst({
+      where: {
+        account,
+      },
+    });
+
+    if (!checkAccount) {
+      responseData(res, 404, 'Account is incorrect or does not exist', '');
+      return;
+    }
+
+    if (bcrypt.compareSync(password, checkAccount.pass_word)) {
+      const token = await this.jwt.createToken({
+        userId: checkAccount.user_id,
+      });
+
+      const tokenRef = await this.jwt.createTokenRef({
+        userId: checkAccount.user_id,
+      });
+
+      await this.prisma.users.update({
         where: {
-          account,
+          user_id: checkAccount.user_id,
+        },
+        data: {
+          refresh_token: tokenRef,
         },
       });
 
-      if (!checkAccount) {
-        responseData(res, 404, 'Account is incorrect or does not exist', '');
-        return;
-      }
+      const format = {
+        account: checkAccount.account,
+        password: password,
+        token,
+      };
 
-      if (bcrypt.compareSync(password, checkAccount.pass_word)) {
-        const token = await this.jwt.createToken({
-          userId: checkAccount.user_id,
-        });
-
-        const tokenRef = await this.jwt.createTokenRef({
-          userId: checkAccount.user_id,
-        });
-
-        await this.prisma.users.update({
-          where: {
-            user_id: checkAccount.user_id,
-          },
-          data: {
-            refresh_token: tokenRef,
-          },
-        });
-
-        const format = {
-          account: checkAccount.account,
-          password: password,
-          token,
-        };
-
-        responseData(res, 200, 'Login successfully', format);
-        return;
-      }
-
-      responseData(res, 404, 'Password is incorrect or does not exist', '');
-    } catch (error) {
-      console.log('🚀 ~ UserService ~ login ~ error:', error);
+      responseData(res, 200, 'Login successfully', format);
+      return;
     }
+
+    responseData(res, 404, 'Password is incorrect or does not exist', '');
   }
 
   // signup
@@ -163,7 +154,7 @@ export class UserService {
     }
 
     const verifyToken = req.user;
-    console.log("🚀 ~ UserService ~ refreshToken ~ verifyToken:", verifyToken)
+    console.log('🚀 ~ UserService ~ refreshToken ~ verifyToken:', verifyToken);
 
     const { key } = this.jwt.decodeTokenRef(getUser.refresh_token);
 
@@ -177,6 +168,65 @@ export class UserService {
     });
 
     responseData(res, 200, 'The token is refreshed', newToken);
+  }
+
+  // getUserInfo
+  async getUserInfo(req: any, res: Response) {
+    const { userId } = req.user;
+
+    const getUserById = await this.prisma.users.findUnique({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    const format = {
+      userId: getUserById.user_id,
+      account: getUserById.account,
+      fullName: getUserById.full_name,
+      email: getUserById.email,
+      phone: getUserById.phone,
+      userTypeCode: getUserById.user_type_code,
+      userTypeName: getUserById.user_type_name,
+      groupCode: getUserById.group_code,
+      avatar: getUserById.avatar,
+    };
+
+    responseData(res, 200, 'Proceed successfully', format);
+  }
+
+  // getUserPagedList
+  async getUserPagedList(req: any, res: Response) {
+    const { pageId } = req.params;
+
+    const pageSize = 10;
+
+    const startingIndex = (parseInt(pageId) - 1) * pageSize;
+
+    const content = await this.prisma.users.findMany({
+      take: pageSize,
+      skip: startingIndex,
+    });
+
+    const numberOfUsers = await this.prisma.users.count();
+
+    const format = content.map(user => ({
+      userId: user.user_id,
+      account: user.account,
+      fullName: user.full_name,
+      email: user.email,
+      phone: user.phone,
+      userTypeCode: user.user_type_code,
+      userTypeName: user.user_type_name,
+      groupCode: user.group_code,
+      birthday: user.birthday,
+      avatar: user.avatar,
+    }))
+
+    responseData(res, 200, 'Proceed successfully', {
+      content: format,
+      allPageNumbers: Math.ceil(numberOfUsers / pageSize),
+    });
   }
 
   findOne(id: number) {
