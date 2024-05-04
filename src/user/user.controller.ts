@@ -10,28 +10,26 @@ import {
   UseGuards,
   Headers,
   Req,
-  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { HeadersToken, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags("UserManagement")
 @Controller('/api/UserManagement')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // getUserList
-  @UseGuards(AuthGuard('jwt'))
   @Get('/GetUserList')
   getUserList(@Res() res: Response) {
     return this.userService.getUserList(res);
   }
 
   // getUserTypeList
-  @UseGuards(AuthGuard('jwt'))
   @Get('/GetUserTypeList')
   GetUserTypeList(@Res() res: Response) {
     return this.userService.GetUserTypeList(res);
@@ -64,18 +62,17 @@ export class UserController {
   // getUserInfo
   @UseGuards(AuthGuard('jwt'))
   @Post('/GetUserInformation')
-  getUserInfo(@Req() req: any, @Res() res: Response) {
+  getUserInfo(@Req() req: any, @Res() res: Response, @Headers("Authorization") Authorization: string) {
     return this.userService.getUserInfo(req, res);
   }
 
   // getUserPagedList
   @Get('/GetUserPagedList/:pageId')
   getUserPagedList(
-    @Req() req: any,
     @Res() res: Response,
-    @Query('pageId') pageId: string,
+    @Param('pageId') pageId: string,
   ) {
-    return this.userService.getUserPagedList(req, res);
+    return this.userService.getUserPagedList(res, pageId);
   }
 
   @Get(':id')

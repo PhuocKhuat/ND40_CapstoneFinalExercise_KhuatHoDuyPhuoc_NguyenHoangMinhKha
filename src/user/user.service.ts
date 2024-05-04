@@ -196,8 +196,7 @@ export class UserService {
   }
 
   // getUserPagedList
-  async getUserPagedList(req: any, res: Response) {
-    const { pageId } = req.params;
+  async getUserPagedList(res: Response, pageId: string) {
 
     const pageSize = 10;
 
@@ -210,7 +209,7 @@ export class UserService {
 
     const numberOfUsers = await this.prisma.users.count();
 
-    const format = content.map(user => ({
+    const format = content.map((user) => ({
       userId: user.user_id,
       account: user.account,
       fullName: user.full_name,
@@ -221,7 +220,7 @@ export class UserService {
       groupCode: user.group_code,
       birthday: user.birthday,
       avatar: user.avatar,
-    }))
+    }));
 
     responseData(res, 200, 'Proceed successfully', {
       content: format,

@@ -10,7 +10,7 @@ async function bootstrap() {
   
   app.use(express.static("."));
   
-  const setTitle = new DocumentBuilder().setTitle("ELearning").build();
+  const setTitle = new DocumentBuilder().addBearerAuth().setTitle("ELearning").build();
   const setDocument = SwaggerModule.createDocument(app, setTitle);
   SwaggerModule.setup("/swagger", app, setDocument);
 
