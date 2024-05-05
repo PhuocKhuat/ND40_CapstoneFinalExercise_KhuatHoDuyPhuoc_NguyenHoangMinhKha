@@ -196,14 +196,11 @@ export class UserService {
   }
 
   // getUserPagedList
-  async getUserPagedList(res: Response, pageId: string) {
-
-    const pageSize = 10;
-
-    const startingIndex = (parseInt(pageId) - 1) * pageSize;
+  async getUserPagedList(res: Response, pageId: string, pageSize: string) {
+    const startingIndex = (parseInt(pageId) - 1) * parseInt(pageSize);
 
     const content = await this.prisma.users.findMany({
-      take: pageSize,
+      take: parseInt(pageSize),
       skip: startingIndex,
     });
 
@@ -224,8 +221,77 @@ export class UserService {
 
     responseData(res, 200, 'Proceed successfully', {
       content: format,
-      allPageNumbers: Math.ceil(numberOfUsers / pageSize),
+      allPageNumbers: Math.ceil(numberOfUsers / parseInt(pageSize)),
     });
+  }
+
+  // getSearchUsers
+
+  async getSearchUsers(res: Response, keyword: string) {
+    const searchUsers = await this.prisma.users.findMany({
+      where: {
+        OR: [
+          {
+            account: {
+              contains: keyword,
+            },
+          },
+          {
+            full_name: {
+              contains: keyword,
+            },
+          },
+          {
+            email: {
+              contains: keyword,
+            },
+          },
+          {
+            phone: {
+              contains: keyword,
+            },
+          },
+          {
+            pass_word: {
+              contains: keyword,
+            },
+          },
+          {
+            user_type_code: {
+              contains: keyword,
+            },
+          },
+          {
+            user_type_name: {
+              contains: keyword,
+            },
+          },
+          {
+            birthday: {
+              contains: keyword,
+            },
+          },
+        ],
+      },
+    });
+
+    if (!searchUsers.length) {
+      responseData(res, 404, 'Keyword not found', '');
+      return;
+    }
+
+    const format = searchUsers.map((field) => ({
+      account: field.account,
+      fullName: field.full_name,
+      email: field.email,
+      phone: field.phone,
+      password: field.pass_word,
+      userTypeCode: field.user_type_code,
+      userTypeName: field.user_type_name,
+      birthday: field.birthday,
+    }));
+
+    responseData(res, 200, 'Proceed successfully', format);
   }
 
   findOne(id: number) {

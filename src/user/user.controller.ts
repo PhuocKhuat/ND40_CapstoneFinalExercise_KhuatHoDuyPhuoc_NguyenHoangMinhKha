@@ -10,44 +10,66 @@ import {
   UseGuards,
   Headers,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { HeadersToken, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import ApiResponses from 'src/configs/DescriptionStatus';
 
 @ApiBearerAuth()
-@ApiTags("UserManagement")
+@ApiTags('UserManagement')
 @Controller('/api/UserManagement')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // getUserList
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Get('/GetUserList')
   getUserList(@Res() res: Response) {
     return this.userService.getUserList(res);
   }
 
   // getUserTypeList
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Get('/GetUserTypeList')
   GetUserTypeList(@Res() res: Response) {
     return this.userService.GetUserTypeList(res);
   }
 
   // login
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Post('/Login')
   login(@Res() res: Response, @Body() login: Login) {
     return this.userService.login(res, login);
   }
 
   // signup
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Post('/Signup')
   signup(@Res() res: Response, @Body() signup: Signup) {
     return this.userService.signup(res, signup);
   }
 
   // refreshToken
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @UseGuards(AuthGuard('jwt'))
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('/RefreshToken')
@@ -60,19 +82,40 @@ export class UserController {
   }
 
   // getUserInfo
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @UseGuards(AuthGuard('jwt'))
   @Post('/GetUserInformation')
-  getUserInfo(@Req() req: any, @Res() res: Response, @Headers("Authorization") Authorization: string) {
+  getUserInfo(
+    @Req() req: any,
+    @Res() res: Response,
+    @Headers('Authorization') Authorization: string,
+  ) {
     return this.userService.getUserInfo(req, res);
   }
 
   // getUserPagedList
-  @Get('/GetUserPagedList/:pageId')
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
+  @ApiQuery({ name: 'pageId', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  @Get('/GetUserPagedList')
   getUserPagedList(
     @Res() res: Response,
-    @Param('pageId') pageId: string,
+    @Query('pageId') pageId: string = '1',
+    @Query('pageSize') pageSize: string = '14',
   ) {
-    return this.userService.getUserPagedList(res, pageId);
+    return this.userService.getUserPagedList(res, pageId, pageSize);
+  }
+
+  // getSearchUsers
+  @Get('/SearchUsers')
+  getSearchUsers(@Res() res: Response, @Query('keyword') keyword: string ) {
+    return this.userService.getSearchUsers(res, keyword);
   }
 
   @Get(':id')
