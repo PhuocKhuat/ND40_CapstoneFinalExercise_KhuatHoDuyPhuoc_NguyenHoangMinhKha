@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
@@ -11,10 +10,11 @@ import {
   Headers,
   Req,
   Query,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AddUser, Login, Signup } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserInfo } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import ApiResponses from 'src/configs/DescriptionStatus';
@@ -123,7 +123,7 @@ export class UserController {
   }
 
   // postAddUser
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(AuthGuard('jwt'))
   @Post('/AddUser')
   postAddUser(@Req() req: any, @Res() res: Response, @Body() addUser: AddUser) {
     return this.userService.postAddUsers(req, res, addUser);
@@ -134,9 +134,14 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  // putUpdateUser
+  @Put('/UpdateUserInfo')
+  UpdateUserInfo(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() updateUserInfo: UpdateUserInfo,
+  ) {
+    return this.userService.UpdateUserInfo(req, res, updateUserInfo);
   }
 
   @Delete(':id')

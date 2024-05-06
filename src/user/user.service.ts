@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AddUser, Login, Signup } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserInfo } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
 import * as bcrypt from 'bcrypt';
@@ -314,19 +314,8 @@ export class UserService {
 
     const { userId } = req.user;
 
-    const checkUser = await this.prisma.users.findUnique({
-      where: {
-        user_id: userId,
-      },
-    });
-
-    if (!checkUser) {
-      responseData(res, 404, 'User not found', '');
-      return;
-    }
-
     const tokenRef = await this.jwt.createTokenRef({
-      userId: checkUser.user_id,
+      userId: userId,
     });
 
     const createUser = await this.prisma.users.create({
@@ -363,8 +352,43 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async UpdateUserInfo(req: any, res: Response, updateUserInfo: UpdateUserInfo) {
+    const {
+      account,
+      fullName,
+      email,
+      phone,
+      password,
+      userTypeCode,
+      userTypeName,
+      groupCode,
+      birthday,
+    } = updateUserInfo;
+
+    const { userId } = req.user;
+
+    const checkUser = await this.prisma.users.findUnique({
+      where: {
+        user_id: userId,
+      }
+    });
+
+    await this.prisma.users.update({
+      where: {
+        user_id: userId,
+      },
+      data: {
+        account,
+        full_name: fullName,
+        email,
+        phone,
+        pass_word: password,
+        user_type_code: userTypeCode,
+        user_type_name: userTypeName,
+        group_code: groupCode,
+        birthday,
+      }
+    })
   }
 
   remove(id: number) {
