@@ -13,7 +13,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { HeadersToken, Login, Signup } from './dto/create-user.dto';
+import { AddUser, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -74,11 +74,11 @@ export class UserController {
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('/RefreshToken')
   refreshToken(
-    @Headers() headers: HeadersToken,
+    @Headers('Authorization') Authorization: string,
     @Req() req: any,
     @Res() res: Response,
   ) {
-    return this.userService.refreshToken(headers, req, res);
+    return this.userService.refreshToken(req, res);
   }
 
   // getUserInfo
@@ -113,9 +113,20 @@ export class UserController {
   }
 
   // getSearchUsers
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Get('/SearchUsers')
-  getSearchUsers(@Res() res: Response, @Query('keyword') keyword: string ) {
+  getSearchUsers(@Res() res: Response, @Query('keyword') keyword: string) {
     return this.userService.getSearchUsers(res, keyword);
+  }
+
+  // postAddUser
+  @UseGuards(AuthGuard("jwt"))
+  @Post('/AddUser')
+  postAddUser(@Req() req: any, @Res() res: Response, @Body() addUser: AddUser) {
+    return this.userService.postAddUsers(req, res, addUser);
   }
 
   @Get(':id')

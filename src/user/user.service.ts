@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { HeadersToken, Login, Signup } from './dto/create-user.dto';
+import { AddUser, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
@@ -133,8 +133,8 @@ export class UserService {
   }
 
   // refreshToken
-  async refreshToken(headers: HeadersToken, req: any, res: Response) {
-    const { authorization } = headers;
+  async refreshToken(req: any, res: Response) {
+    // const { authorization } = headers;
     // console.log('🚀 ~ UserService ~ refreshToken ~ token:', authorization);
 
     const { userId } = req.user;
@@ -226,7 +226,6 @@ export class UserService {
   }
 
   // getSearchUsers
-
   async getSearchUsers(res: Response, keyword: string) {
     const searchUsers = await this.prisma.users.findMany({
       where: {
@@ -267,6 +266,11 @@ export class UserService {
             },
           },
           {
+            group_code: {
+              contains: keyword,
+            },
+          },
+          {
             birthday: {
               contains: keyword,
             },
@@ -292,6 +296,67 @@ export class UserService {
     }));
 
     responseData(res, 200, 'Proceed successfully', format);
+  }
+
+  // postAddUsers
+  async postAddUsers(req: any, res: Response, addUser: AddUser) {
+    const {
+      account,
+      fullName,
+      email,
+      phone,
+      password,
+      userTypeCode,
+      userTypeName,
+      groupCode,
+      birthday,
+    } = addUser;
+
+    const { userId } = req.user;
+
+    const checkUser = await this.prisma.users.findUnique({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    if (!checkUser) {
+      responseData(res, 404, 'User not found', '');
+      return;
+    }
+
+    const tokenRef = await this.jwt.createTokenRef({
+      userId: checkUser.user_id,
+    });
+
+    const createUser = await this.prisma.users.create({
+      data: {
+        account,
+        full_name: fullName,
+        email,
+        phone,
+        pass_word: password,
+        user_type_code: userTypeCode,
+        user_type_name: userTypeName,
+        group_code: groupCode,
+        birthday,
+        refresh_token: tokenRef,
+      },
+    });
+
+    const format = {
+      account: createUser.account,
+      fullName: createUser.full_name,
+      email: createUser.email,
+      phone: createUser.phone,
+      password: createUser.pass_word,
+      userTypeCode: createUser.user_type_code,
+      userTypeName: createUser.user_type_name,
+      groupCode: createUser.group_code,
+      birthday: createUser.birthday,
+    };
+
+    responseData(res, 200, 'Add user successfully', format);
   }
 
   findOne(id: number) {

@@ -22,7 +22,14 @@ export class Signup {
   phone: string;
 }
 
-export class HeadersToken {
-  @ApiProperty()
-  authorization: string;
+export class AddUser {
+  account: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  password: string;
+  userTypeCode: string;
+  userTypeName: string;
+  groupCode: string;
+  birthday: string;
 }
