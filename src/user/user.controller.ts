@@ -117,12 +117,17 @@ export class UserController {
   @ApiResponses.UnAuthorization
   @ApiResponses.Forbidden
   @ApiResponses.InternalServerError
+  @ApiQuery({ name: 'keyword', required: false })
   @Get('/SearchUsers')
-  getSearchUsers(@Res() res: Response, @Query('keyword') keyword: string) {
+  getSearchUsers(@Res() res: Response, @Query('keyword') keyword: string = '') {
     return this.userService.getSearchUsers(res, keyword);
   }
 
   // postAddUser
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @UseGuards(AuthGuard('jwt'))
   @Post('/AddUser')
   postAddUser(@Req() req: any, @Res() res: Response, @Body() addUser: AddUser) {
@@ -135,13 +140,14 @@ export class UserController {
   }
 
   // putUpdateUser
+  @UseGuards(AuthGuard('jwt'))
   @Put('/UpdateUserInfo')
-  UpdateUserInfo(
+  udateUserInfo(
     @Req() req: any,
     @Res() res: Response,
     @Body() updateUserInfo: UpdateUserInfo,
   ) {
-    return this.userService.UpdateUserInfo(req, res, updateUserInfo);
+    return this.userService.updateUserInfo(req, res, updateUserInfo);
   }
 
   @Delete(':id')

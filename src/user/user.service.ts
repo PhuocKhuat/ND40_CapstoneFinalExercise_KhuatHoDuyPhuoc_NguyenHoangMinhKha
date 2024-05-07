@@ -58,7 +58,7 @@ export class UserService {
       return;
     }
 
-    if (bcrypt.compareSync(password, checkAccount.pass_word)) {
+    if (password === checkAccount.pass_word) {
       const token = await this.jwt.createToken({
         userId: checkAccount.user_id,
       });
@@ -108,7 +108,7 @@ export class UserService {
       data: {
         account,
         full_name: fullName,
-        pass_word: bcrypt.hashSync(password, 10),
+        pass_word: password,
         email,
         birthday,
         phone,
@@ -314,47 +314,58 @@ export class UserService {
 
     const { userId } = req.user;
 
-    const tokenRef = await this.jwt.createTokenRef({
-      userId: userId,
-    });
-
-    const createUser = await this.prisma.users.create({
-      data: {
+    const checkAccount = await this.prisma.users.findFirst({
+      where: {
         account,
-        full_name: fullName,
-        email,
-        phone,
-        pass_word: password,
-        user_type_code: userTypeCode,
-        user_type_name: userTypeName,
-        group_code: groupCode,
-        birthday,
-        refresh_token: tokenRef,
       },
     });
 
-    const format = {
-      account: createUser.account,
-      fullName: createUser.full_name,
-      email: createUser.email,
-      phone: createUser.phone,
-      password: createUser.pass_word,
-      userTypeCode: createUser.user_type_code,
-      userTypeName: createUser.user_type_name,
-      groupCode: createUser.group_code,
-      birthday: createUser.birthday,
-    };
+    if (!checkAccount) {
+      const tokenRef = await this.jwt.createTokenRef({
+        userId: userId,
+      });
 
-    responseData(res, 200, 'Add user successfully', format);
+      const createUser = await this.prisma.users.create({
+        data: {
+          account,
+          full_name: fullName,
+          email,
+          phone,
+          pass_word: password,
+          user_type_code: userTypeCode,
+          user_type_name: userTypeName,
+          group_code: groupCode,
+          birthday,
+          refresh_token: tokenRef,
+        },
+      });
+
+      const format = {
+        account: createUser.account,
+        fullName: createUser.full_name,
+        email: createUser.email,
+        phone: createUser.phone,
+        password: createUser.pass_word,
+        userTypeCode: createUser.user_type_code,
+        userTypeName: createUser.user_type_name,
+        groupCode: createUser.group_code,
+        birthday: createUser.birthday,
+      };
+
+      responseData(res, 200, 'Add user successfully', format);
+      return;
+    }
+
+    responseData(res, 409, 'Account already exists', '');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  async UpdateUserInfo(req: any, res: Response, updateUserInfo: UpdateUserInfo) {
+  // updateUserInfo
+  async updateUserInfo(
+    req: any,
+    res: Response,
+    updateUserInfo: UpdateUserInfo,
+  ) {
     const {
-      account,
       fullName,
       email,
       phone,
@@ -367,18 +378,11 @@ export class UserService {
 
     const { userId } = req.user;
 
-    const checkUser = await this.prisma.users.findUnique({
-      where: {
-        user_id: userId,
-      }
-    });
-
-    await this.prisma.users.update({
+    const updateUser = await this.prisma.users.update({
       where: {
         user_id: userId,
       },
       data: {
-        account,
         full_name: fullName,
         email,
         phone,
@@ -387,8 +391,25 @@ export class UserService {
         user_type_name: userTypeName,
         group_code: groupCode,
         birthday,
-      }
-    })
+      },
+    });
+
+    const format = {
+      fullName: updateUser.full_name,
+      email: updateUser.email,
+      phone: updateUser.phone,
+      password: updateUser.pass_word,
+      userTypeCode: updateUser.user_type_code,
+      userTypeName: updateUser.user_type_name,
+      groupCode: updateUser.group_code,
+      birthday: updateUser.birthday,
+    } 
+
+    responseData(res, 200, 'Update user infomation successfully', format);
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} user`;
   }
 
   remove(id: number) {
