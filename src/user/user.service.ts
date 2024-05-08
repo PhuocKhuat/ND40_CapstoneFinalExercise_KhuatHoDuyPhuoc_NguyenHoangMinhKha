@@ -3,7 +3,6 @@ import { AddUser, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserInfo } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
-import * as bcrypt from 'bcrypt';
 import Jwt from 'src/configs/jwt';
 
 @Injectable()
@@ -172,6 +171,8 @@ export class UserService {
 
   // getUserInfo
   async getUserInfo(req: any, res: Response) {
+    // authorization.split(' ')[1];
+
     const { userId } = req.user;
 
     const getUserById = await this.prisma.users.findUnique({
@@ -403,7 +404,7 @@ export class UserService {
       userTypeName: updateUser.user_type_name,
       groupCode: updateUser.group_code,
       birthday: updateUser.birthday,
-    } 
+    };
 
     responseData(res, 200, 'Update user infomation successfully', format);
   }

@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 import { AddUser, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserInfo } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 import ApiResponses from 'src/configs/DescriptionStatus';
 
 @ApiBearerAuth()
@@ -86,8 +86,13 @@ export class UserController {
   @ApiResponses.UnAuthorization
   @ApiResponses.Forbidden
   @ApiResponses.InternalServerError
-  @UseGuards(AuthGuard('jwt'))
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Custom header',
+  })
   @Post('/GetUserInformation')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   getUserInfo(
     @Req() req: any,
     @Res() res: Response,
