@@ -424,13 +424,13 @@ export class UserService {
           account: account,
         },
       });
-
+  
       const removeUser = await this.prisma.users.delete({
         where: {
           user_id: user.user_id,
         },
       });
-
+  
       const format = {
         account: removeUser.account,
         fullName: removeUser.full_name,
@@ -442,9 +442,10 @@ export class UserService {
         groupCode: removeUser.group_code,
         birthday: removeUser.birthday,
       };
-
+  
       responseData(res, 200, 'Delete user successfully', format);
     }
+
   }
 
   findOne(id: number) {

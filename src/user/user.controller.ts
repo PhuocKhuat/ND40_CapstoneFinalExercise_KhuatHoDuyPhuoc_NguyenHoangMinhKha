@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 import { AddUser, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserInfo } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import ApiResponses from 'src/configs/DescriptionStatus';
 
 @ApiBearerAuth()
@@ -89,10 +89,7 @@ export class UserController {
   @Post('/GetUserInformation')
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
-  getUserInfo(
-    @Req() req: any,
-    @Res() res: Response,
-  ) {
+  getUserInfo(@Req() req: any, @Res() res: Response) {
     return this.userService.getUserInfo(req, res);
   }
 
@@ -128,16 +125,29 @@ export class UserController {
   @ApiResponses.UnAuthorization
   @ApiResponses.Forbidden
   @ApiResponses.InternalServerError
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
   @Post('/AddUser')
+  @ApiBody({
+    type: UpdateUserInfo,
+    required: false,
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
   postAddUser(@Req() req: any, @Res() res: Response, @Body() addUser: AddUser) {
     return this.userService.postAddUsers(req, res, addUser);
   }
 
   // putUpdateUser
-  @UseGuards(AuthGuard('jwt'))
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Put('/UpdateUserInfo')
+  @ApiBody({
+    type: UpdateUserInfo,
+    required: false,
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
   udateUserInfo(
     @Req() req: any,
     @Res() res: Response,
@@ -147,8 +157,17 @@ export class UserController {
   }
 
   // deleteUser
-  @UseGuards(AuthGuard("jwt"))
+  @ApiResponses.Success
+  @ApiResponses.UnAuthorization
+  @ApiResponses.Forbidden
+  @ApiResponses.InternalServerError
   @Delete('/DeleteUser')
+  @ApiQuery({
+    name: 'Account',
+    required: false,
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
   deleteUser(
     @Query('Account') account: string,
     @Req() req: any,
