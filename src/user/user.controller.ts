@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 import { AddUser, Login, Signup } from './dto/create-user.dto';
 import { UpdateUserInfo } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import ApiResponses from 'src/configs/DescriptionStatus';
 
 @ApiBearerAuth()
@@ -86,17 +86,12 @@ export class UserController {
   @ApiResponses.UnAuthorization
   @ApiResponses.Forbidden
   @ApiResponses.InternalServerError
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Custom header',
-  })
   @Post('/GetUserInformation')
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   getUserInfo(
     @Req() req: any,
     @Res() res: Response,
-    @Headers('Authorization') Authorization: string,
   ) {
     return this.userService.getUserInfo(req, res);
   }
@@ -133,15 +128,11 @@ export class UserController {
   @ApiResponses.UnAuthorization
   @ApiResponses.Forbidden
   @ApiResponses.InternalServerError
+  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @Post('/AddUser')
   postAddUser(@Req() req: any, @Res() res: Response, @Body() addUser: AddUser) {
     return this.userService.postAddUsers(req, res, addUser);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
   }
 
   // putUpdateUser
@@ -155,8 +146,19 @@ export class UserController {
     return this.userService.updateUserInfo(req, res, updateUserInfo);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  // deleteUser
+  @UseGuards(AuthGuard("jwt"))
+  @Delete('/DeleteUser')
+  deleteUser(
+    @Query('Account') account: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    return this.userService.deleteUser(account, req, res);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
   }
 }

@@ -76,7 +76,6 @@ export class UserService {
       });
 
       const format = {
-        account: checkAccount.account,
         password: password,
         token,
       };
@@ -409,11 +408,46 @@ export class UserService {
     responseData(res, 200, 'Update user infomation successfully', format);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  // deleteUser
+  async deleteUser(account: string, req: any, res: Response) {
+    const { userId } = req.user;
+
+    const checkUser = await this.prisma.users.findUnique({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    if (checkUser) {
+      const user = await this.prisma.users.findFirst({
+        where: {
+          account: account,
+        },
+      });
+
+      const removeUser = await this.prisma.users.delete({
+        where: {
+          user_id: user.user_id,
+        },
+      });
+
+      const format = {
+        account: removeUser.account,
+        fullName: removeUser.full_name,
+        email: removeUser.email,
+        phone: removeUser.phone,
+        password: removeUser.pass_word,
+        userTypeCode: removeUser.user_type_code,
+        userTypeName: removeUser.user_type_name,
+        groupCode: removeUser.group_code,
+        birthday: removeUser.birthday,
+      };
+
+      responseData(res, 200, 'Delete user successfully', format);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  findOne(id: number) {
+    return `This action returns a #${id} user`;
   }
 }
