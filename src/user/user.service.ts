@@ -62,7 +62,7 @@ export class UserService {
         userId: checkAccount.user_id,
       });
 
-      const tokenRef = await this.jwt.createTokenRef({
+      const tokenRefresh = await this.jwt.createTokenRef({
         userId: checkAccount.user_id,
       });
 
@@ -71,13 +71,14 @@ export class UserService {
           user_id: checkAccount.user_id,
         },
         data: {
-          refresh_token: tokenRef,
+          refresh_token: tokenRefresh,
         },
       });
 
       const format = {
         password: password,
         token,
+        tokenRefresh,
       };
 
       responseData(res, 200, 'Login successfully', format);

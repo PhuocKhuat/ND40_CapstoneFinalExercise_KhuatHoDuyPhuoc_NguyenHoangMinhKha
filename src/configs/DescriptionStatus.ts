@@ -14,5 +14,4 @@ export default class ApiResponses {
     status: 500,
     description: 'Internal Server Error',
   });
-
 }

@@ -19,57 +19,41 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import ApiResponses from 'src/configs/DescriptionStatus';
 
-@ApiBearerAuth()
+@ApiResponses.Success
+@ApiResponses.UnAuthorization
+@ApiResponses.Forbidden
+@ApiResponses.InternalServerError
+// @ApiBearerAuth()
 @ApiTags('UserManagement')
 @Controller('/api/UserManagement')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // getUserList
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Get('/GetUserList')
   getUserList(@Res() res: Response) {
     return this.userService.getUserList(res);
   }
 
   // getUserTypeList
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Get('/GetUserTypeList')
   GetUserTypeList(@Res() res: Response) {
     return this.userService.GetUserTypeList(res);
   }
 
   // login
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Post('/Login')
   login(@Res() res: Response, @Body() login: Login) {
     return this.userService.login(res, login);
   }
 
   // signup
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Post('/Signup')
   signup(@Res() res: Response, @Body() signup: Signup) {
     return this.userService.signup(res, signup);
   }
 
   // refreshToken
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @UseGuards(AuthGuard('jwt'))
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('/RefreshToken')
@@ -82,10 +66,6 @@ export class UserController {
   }
 
   // getUserInfo
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Post('/GetUserInformation')
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
@@ -94,10 +74,6 @@ export class UserController {
   }
 
   // getUserPagedList
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @ApiQuery({ name: 'pageId', required: false })
   @ApiQuery({ name: 'pageSize', required: false })
   @Get('/GetUserPagedList')
@@ -110,10 +86,6 @@ export class UserController {
   }
 
   // getSearchUsers
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @ApiQuery({ name: 'keyword', required: false })
   @Get('/SearchUsers')
   getSearchUsers(@Res() res: Response, @Query('keyword') keyword: string = '') {
@@ -121,10 +93,6 @@ export class UserController {
   }
 
   // postAddUser
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Post('/AddUser')
   @ApiBody({
     type: UpdateUserInfo,
@@ -137,10 +105,6 @@ export class UserController {
   }
 
   // putUpdateUser
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Put('/UpdateUserInfo')
   @ApiBody({
     type: UpdateUserInfo,
@@ -157,10 +121,6 @@ export class UserController {
   }
 
   // deleteUser
-  @ApiResponses.Success
-  @ApiResponses.UnAuthorization
-  @ApiResponses.Forbidden
-  @ApiResponses.InternalServerError
   @Delete('/DeleteUser')
   @ApiQuery({
     name: 'Account',
