@@ -26,14 +26,4 @@ export default class Jwt {
       expiresIn: `${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`,
     });
   }
-
-  checkTokenRef(token: string) {
-    return this.jwtService.verifyAsync(token, {
-      secret: 'ADVANCED_SECRET_KEY',
-    });
-  }
-
-  decodeTokenRef(token: string) {
-    return this.jwtService.decode(token);
-  }
 }

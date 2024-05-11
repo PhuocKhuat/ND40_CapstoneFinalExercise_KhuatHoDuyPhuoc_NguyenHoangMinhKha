@@ -7,7 +7,6 @@ import {
   Delete,
   Res,
   UseGuards,
-  Headers,
   Req,
   Query,
   Put,
@@ -54,11 +53,10 @@ export class UserController {
   }
 
   // refreshToken
-  @UseGuards(AuthGuard('jwt'))
-  @UseGuards(AuthGuard('jwt-refresh'))
   @Post('/RefreshToken')
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt-refresh'))
   refreshToken(
-    @Headers('Authorization') Authorization: string,
     @Req() req: any,
     @Res() res: Response,
   ) {

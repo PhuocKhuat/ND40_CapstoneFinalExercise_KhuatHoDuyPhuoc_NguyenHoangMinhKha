@@ -133,36 +133,17 @@ export class UserService {
 
   // refreshToken
   async refreshToken(req: any, res: Response) {
-    // const { authorization } = headers;
-    // console.log('🚀 ~ UserService ~ refreshToken ~ token:', authorization);
-
-    const { userId } = req.user;
-    // console.log('🚀 ~ UserService ~ refreshToken ~ userId:', userId);
+    const { user_id } = req.user;
 
     // Bước nếu token lỗi và lỗi tên thì trả responseData trả lỗi, jwtStrategy đã làm rồi.
 
     const getUser = await this.prisma.users.findUnique({
       where: {
-        user_id: userId,
+        user_id,
       },
     });
 
-    if (!getUser) {
-      responseData(res, 401, 'User not found', '');
-      return;
-    }
-
-    const verifyToken = req.user;
-    console.log('🚀 ~ UserService ~ refreshToken ~ verifyToken:', verifyToken);
-
-    const { key } = this.jwt.decodeTokenRef(getUser.refresh_token);
-
-    if (verifyToken.key != key) {
-      responseData(res, 401, 'Token is not authorized', '');
-      return;
-    }
-
-    const newToken = this.jwt.createToken({
+    const newToken = await this.jwt.createToken({
       userId: getUser.user_id,
     });
 
@@ -425,13 +406,13 @@ export class UserService {
           account: account,
         },
       });
-  
+
       const removeUser = await this.prisma.users.delete({
         where: {
           user_id: user.user_id,
         },
       });
-  
+
       const format = {
         account: removeUser.account,
         fullName: removeUser.full_name,
@@ -443,10 +424,9 @@ export class UserService {
         groupCode: removeUser.group_code,
         birthday: removeUser.birthday,
       };
-  
+
       responseData(res, 200, 'Delete user successfully', format);
     }
-
   }
 
   findOne(id: number) {
