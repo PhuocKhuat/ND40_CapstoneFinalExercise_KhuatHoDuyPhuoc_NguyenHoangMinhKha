@@ -42,3 +42,11 @@ export class AddUser {
   @ApiProperty()
   birthday: string;
 }
+
+export class GetListOfUnregisteredUsers {
+  maKhoaHoc: string;
+}
+
+export class GetListOfStudentsPendingReview {
+  maKhoaHoc: string;
+}

@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { AddUser, Login, Signup } from './dto/create-user.dto';
+import {
+  AddUser,
+  GetListOfStudentsPendingReview,
+  GetListOfUnregisteredUsers,
+  Login,
+  Signup,
+} from './dto/create-user.dto';
 import { UpdateUserInfo } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
@@ -429,7 +435,13 @@ export class UserService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  // Get list of unregistered users
+  getListOfUnregisteredUsers(maKhoaHoc: GetListOfUnregisteredUsers) {
+
+  }
+
+  //getListOfStudentsPendingReview
+  getListOfStudentsPendingReview(maKhoaHoc: GetListOfStudentsPendingReview) {
+
   }
 }

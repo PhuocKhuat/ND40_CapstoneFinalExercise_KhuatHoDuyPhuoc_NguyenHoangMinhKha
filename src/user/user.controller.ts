@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   Res,
   UseGuards,
@@ -12,7 +11,13 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AddUser, Login, Signup } from './dto/create-user.dto';
+import {
+  AddUser,
+  GetListOfStudentsPendingReview,
+  GetListOfUnregisteredUsers,
+  Login,
+  Signup,
+} from './dto/create-user.dto';
 import { UpdateUserInfo } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -56,10 +61,7 @@ export class UserController {
   @Post('/RefreshToken')
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt-refresh'))
-  refreshToken(
-    @Req() req: any,
-    @Res() res: Response,
-  ) {
+  refreshToken(@Req() req: any, @Res() res: Response) {
     return this.userService.refreshToken(req, res);
   }
 
@@ -134,8 +136,17 @@ export class UserController {
     return this.userService.deleteUser(account, req, res);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  // Get list of unregistered users
+  @Post('/GetListOfUnregisteredUsers')
+  getListOfUnregisteredUsers(@Body() maKhoaHoc: GetListOfUnregisteredUsers) {
+    return this.userService.getListOfUnregisteredUsers(maKhoaHoc);
+  }
+
+  // Get list of unregistered users
+  @Post('/GetListOfStudentsPendingReview')
+  getListOfStudentsPendingReview(
+    @Body() maKhoaHoc: GetListOfStudentsPendingReview,
+  ) {
+    return this.userService.getListOfStudentsPendingReview(maKhoaHoc);
   }
 }
