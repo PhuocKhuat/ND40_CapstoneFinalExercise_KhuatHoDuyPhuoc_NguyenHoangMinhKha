@@ -138,8 +138,12 @@ export class UserController {
 
   // Get list of unregistered users
   @Post('/GetListOfUnregisteredUsers')
-  getListOfUnregisteredUsers(@Body() maKhoaHoc: GetListOfUnregisteredUsers) {
-    return this.userService.getListOfUnregisteredUsers(maKhoaHoc);
+  getListOfUnregisteredUsers(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() maKhoaHoc: GetListOfUnregisteredUsers,
+  ) {
+    return this.userService.getListOfUnregisteredUsers(req, res, maKhoaHoc);
   }
 
   // Get list of unregistered users

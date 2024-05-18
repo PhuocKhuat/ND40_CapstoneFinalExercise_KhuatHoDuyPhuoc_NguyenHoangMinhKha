@@ -398,50 +398,64 @@ export class UserService {
 
   // deleteUser
   async deleteUser(account: string, req: any, res: Response) {
-    const { userId } = req.user;
-
-    const checkUser = await this.prisma.users.findUnique({
+    const user = await this.prisma.users.findFirst({
       where: {
-        user_id: userId,
+        account: account,
       },
     });
 
-    if (checkUser) {
-      const user = await this.prisma.users.findFirst({
-        where: {
-          account: account,
-        },
-      });
+    const removeUser = await this.prisma.users.delete({
+      where: {
+        user_id: user.user_id,
+      },
+    });
 
-      const removeUser = await this.prisma.users.delete({
-        where: {
-          user_id: user.user_id,
-        },
-      });
+    const format = {
+      account: removeUser.account,
+      fullName: removeUser.full_name,
+      email: removeUser.email,
+      phone: removeUser.phone,
+      password: removeUser.pass_word,
+      userTypeCode: removeUser.user_type_code,
+      userTypeName: removeUser.user_type_name,
+      groupCode: removeUser.group_code,
+      birthday: removeUser.birthday,
+    };
 
-      const format = {
-        account: removeUser.account,
-        fullName: removeUser.full_name,
-        email: removeUser.email,
-        phone: removeUser.phone,
-        password: removeUser.pass_word,
-        userTypeCode: removeUser.user_type_code,
-        userTypeName: removeUser.user_type_name,
-        groupCode: removeUser.group_code,
-        birthday: removeUser.birthday,
-      };
-
-      responseData(res, 200, 'Delete user successfully', format);
-    }
+    responseData(res, 200, 'Delete user successfully', format);
   }
 
   // Get list of unregistered users
-  getListOfUnregisteredUsers(maKhoaHoc: GetListOfUnregisteredUsers) {
+  async getListOfUnregisteredUsers(
+    req: any,
+    res: Response,
+    maKhoaHoc: GetListOfUnregisteredUsers,
+  ) {
 
+    const checkCourse = await this.prisma.courses.findUnique({
+      where: {
+        course_id: parseInt(maKhoaHoc.maKhoaHoc),
+      },
+    });
+
+    if (!checkCourse) {
+      responseData(res, 404, "Course not found or does not exist", "");
+      return;
+    }
+
+    const unregisteredUsers = await this.prisma.users.findMany({
+      where: {
+        course_enrollment: {
+          none: {
+            course_id: parseInt(maKhoaHoc.maKhoaHoc),
+          }
+        }
+      }
+    });
+
+    responseData(res, 200, "Proceed successfully", unregisteredUsers);
   }
 
   //getListOfStudentsPendingReview
-  getListOfStudentsPendingReview(maKhoaHoc: GetListOfStudentsPendingReview) {
-
-  }
+  getListOfStudentsPendingReview(maKhoaHoc: GetListOfStudentsPendingReview) {}
 }
