@@ -138,6 +138,8 @@ export class UserController {
 
   // Get list of unregistered users
   @Post('/GetListOfUnregisteredUsers')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
   getListOfUnregisteredUsers(
     @Req() req: any,
     @Res() res: Response,
@@ -146,11 +148,13 @@ export class UserController {
     return this.userService.getListOfUnregisteredUsers(req, res, maKhoaHoc);
   }
 
-  // Get list of unregistered users
+  // Get list of students pending preview
   @Post('/GetListOfStudentsPendingReview')
   getListOfStudentsPendingReview(
+    @Req() req: any,
+    @Res() res: Response,
     @Body() maKhoaHoc: GetListOfStudentsPendingReview,
   ) {
-    return this.userService.getListOfStudentsPendingReview(maKhoaHoc);
+    return this.userService.getListOfStudentsPendingReview(req, res, maKhoaHoc);
   }
 }

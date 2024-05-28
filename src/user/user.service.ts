@@ -431,7 +431,6 @@ export class UserService {
     res: Response,
     maKhoaHoc: GetListOfUnregisteredUsers,
   ) {
-
     const checkCourse = await this.prisma.courses.findUnique({
       where: {
         course_id: parseInt(maKhoaHoc.maKhoaHoc),
@@ -439,7 +438,7 @@ export class UserService {
     });
 
     if (!checkCourse) {
-      responseData(res, 404, "Course not found or does not exist", "");
+      responseData(res, 404, 'Course not found or does not exist', '');
       return;
     }
 
@@ -448,14 +447,80 @@ export class UserService {
         course_enrollment: {
           none: {
             course_id: parseInt(maKhoaHoc.maKhoaHoc),
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
-    responseData(res, 200, "Proceed successfully", unregisteredUsers);
+    const format = unregisteredUsers.map((user) => ({
+      userId: user.user_id,
+      account: user.account,
+      fullName: user.full_name,
+      email: user.email,
+      phone: user.phone,
+      userTypeCode: user.user_type_code,
+      userTypeName: user.user_type_name,
+      groupCode: user.group_code,
+      birthday: user.birthday,
+      avatar: user.avatar,
+    }));
+
+    responseData(res, 200, 'Proceed successfully', format);
   }
 
   //getListOfStudentsPendingReview
-  getListOfStudentsPendingReview(maKhoaHoc: GetListOfStudentsPendingReview) {}
+  async getListOfStudentsPendingReview(
+    req: any,
+    res: Response,
+    maKhoaHoc: GetListOfStudentsPendingReview,
+  ) {
+    const checkCourse = await this.prisma.courses.findUnique({
+      where: {
+        course_id: parseInt(maKhoaHoc.maKhoaHoc),
+      },
+    });
+
+    if (!checkCourse) {
+      return responseData(res, 404, 'Course not found or does not exist', '');
+    }
+
+    const pendingReviewUsers = await this.prisma.course_enrollment.findMany({
+      where: {
+        status: 1,
+      },
+      include: { users: true, courses: true },
+    });
+
+    const format = pendingReviewUsers.map((user) => ({
+      enrollmentId: user.user_id,
+      createdDate: user.created_date,
+      status: user.status,
+      user: {
+        userId: user.users.user_id,
+        account: user.users.account,
+        fullName: user.users.full_name,
+        email: user.users.email,
+        phone: user.users.phone,
+        userTypeCode: user.users.user_type_code,
+        userTypeName: user.users.user_type_name,
+        groupCode: user.users.group_code,
+        birthday: user.users.birthday,
+        avatar: user.users.avatar,
+      },
+      course: {
+        courseId: user.courses.course_id,
+        aliases: user.courses.aliases,
+        courseName: user.courses.course_name,
+        description: user.courses.description,
+        views: user.courses.views,
+        image: user.courses.image,
+        groupCode: user.courses.group_code,
+        createdDate: user.courses.created_date,
+        numberOfStudents: user.courses.number_of_students,
+        categoryId: user.courses.category_id,
+      }
+    }));
+
+    responseData(res, 200, 'Proceed successfully', format);
+  }
 }
