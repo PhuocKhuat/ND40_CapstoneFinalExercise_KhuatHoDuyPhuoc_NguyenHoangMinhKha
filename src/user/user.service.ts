@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
   AddUser,
-  GetListOfStudentsPendingReview,
+  GetListOfPendingReviewStudents,
+  GetListOfReviewedStudents,
   GetListOfUnregisteredUsers,
   Login,
   Signup,
@@ -468,11 +469,11 @@ export class UserService {
     responseData(res, 200, 'Proceed successfully', format);
   }
 
-  //getListOfStudentsPendingReview
-  async getListOfStudentsPendingReview(
+  //getListOfPendingReviewStudents
+  async getListOfPendingReviewStudents(
     req: any,
     res: Response,
-    maKhoaHoc: GetListOfStudentsPendingReview,
+    maKhoaHoc: GetListOfPendingReviewStudents,
   ) {
     const checkCourse = await this.prisma.courses.findUnique({
       where: {
@@ -481,19 +482,20 @@ export class UserService {
     });
 
     if (!checkCourse) {
-      return responseData(res, 404, 'Course not found or does not exist', '');
+      responseData(res, 404, 'Course not found or does not exist', '');
+      return;
     }
 
     const pendingReviewUsers = await this.prisma.course_enrollment.findMany({
       where: {
         status: 1,
+        course_id: parseInt(maKhoaHoc.maKhoaHoc),
       },
-      include: { users: true, courses: true },
+      include: { users: true },
     });
 
     const format = pendingReviewUsers.map((user) => ({
-      enrollmentId: user.user_id,
-      createdDate: user.created_date,
+      dateCreated: user.created_date,
       status: user.status,
       user: {
         userId: user.users.user_id,
@@ -507,18 +509,50 @@ export class UserService {
         birthday: user.users.birthday,
         avatar: user.users.avatar,
       },
-      course: {
-        courseId: user.courses.course_id,
-        aliases: user.courses.aliases,
-        courseName: user.courses.course_name,
-        description: user.courses.description,
-        views: user.courses.views,
-        image: user.courses.image,
-        groupCode: user.courses.group_code,
-        createdDate: user.courses.created_date,
-        numberOfStudents: user.courses.number_of_students,
-        categoryId: user.courses.category_id,
-      }
+    }));
+
+    responseData(res, 200, 'Proceed successfully', format);
+  }
+
+  //GetListOfReviewedStudents
+  async GetListOfReviewedStudents(
+    res: Response,
+    maKhoaHoc: GetListOfReviewedStudents,
+  ) {
+    const checkCourse = await this.prisma.courses.findUnique({
+      where: {
+        course_id: parseInt(maKhoaHoc.maKhoaHoc),
+      },
+    });
+
+    if (!checkCourse) {
+      responseData(res, 404, 'Course not found or does not exist', '');
+      return;
+    }
+
+    const pendingReviewUsers = await this.prisma.course_enrollment.findMany({
+      where: {
+        status: 2,
+        course_id: parseInt(maKhoaHoc.maKhoaHoc),
+      },
+      include: { users: true },
+    });
+
+    const format = pendingReviewUsers.map((user) => ({
+      dateCreated: user.created_date,
+      status: user.status,
+      user: {
+        userId: user.users.user_id,
+        account: user.users.account,
+        fullName: user.users.full_name,
+        email: user.users.email,
+        phone: user.users.phone,
+        userTypeCode: user.users.user_type_code,
+        userTypeName: user.users.user_type_name,
+        groupCode: user.users.group_code,
+        birthday: user.users.birthday,
+        avatar: user.users.avatar,
+      },
     }));
 
     responseData(res, 200, 'Proceed successfully', format);

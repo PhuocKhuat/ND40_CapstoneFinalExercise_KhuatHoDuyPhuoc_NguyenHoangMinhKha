@@ -48,7 +48,12 @@ export class GetListOfUnregisteredUsers {
   maKhoaHoc: string;
 }
 
-export class GetListOfStudentsPendingReview {
+export class GetListOfPendingReviewStudents {
+  @ApiProperty()
+  maKhoaHoc: string;
+}
+
+export class GetListOfReviewedStudents {
   @ApiProperty()
   maKhoaHoc: string;
 }

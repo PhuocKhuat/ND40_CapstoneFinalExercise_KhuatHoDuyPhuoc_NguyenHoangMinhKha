@@ -13,7 +13,8 @@ import {
 import { UserService } from './user.service';
 import {
   AddUser,
-  GetListOfStudentsPendingReview,
+  GetListOfPendingReviewStudents,
+  GetListOfReviewedStudents,
   GetListOfUnregisteredUsers,
   Login,
   Signup,
@@ -148,13 +149,26 @@ export class UserController {
     return this.userService.getListOfUnregisteredUsers(req, res, maKhoaHoc);
   }
 
-  // Get list of students pending preview
-  @Post('/GetListOfStudentsPendingReview')
-  getListOfStudentsPendingReview(
+  // Get list of pending preview students
+  @Post('/GetListOfPendingReviewStudents')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  getListOfPendingReviewStudents(
     @Req() req: any,
     @Res() res: Response,
-    @Body() maKhoaHoc: GetListOfStudentsPendingReview,
+    @Body() maKhoaHoc: GetListOfPendingReviewStudents,
   ) {
-    return this.userService.getListOfStudentsPendingReview(req, res, maKhoaHoc);
+    return this.userService.getListOfPendingReviewStudents(req, res, maKhoaHoc);
+  }
+
+  // Get list of previewed students
+  @Post('/GetListOfReviewedStudents')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  GetListOfReviewedStudents(
+    @Res() res: Response,
+    @Body() maKhoaHoc: GetListOfReviewedStudents,
+  ) {
+    return this.userService.GetListOfReviewedStudents(res, maKhoaHoc);
   }
 }
