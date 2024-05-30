@@ -288,7 +288,7 @@ export class UserService {
   }
 
   // postAddUsers
-  async postAddUsers(req: any, res: Response, addUser: AddUser) {
+  async postAddUsers(res: Response, addUser: AddUser) {
     const {
       account,
       fullName,
@@ -301,8 +301,6 @@ export class UserService {
       birthday,
     } = addUser;
 
-    const { userId } = req.user;
-
     const checkAccount = await this.prisma.users.findFirst({
       where: {
         account,
@@ -310,10 +308,6 @@ export class UserService {
     });
 
     if (!checkAccount) {
-      const tokenRef = await this.jwt.createTokenRef({
-        userId: userId,
-      });
-
       const createUser = await this.prisma.users.create({
         data: {
           account,
@@ -325,7 +319,6 @@ export class UserService {
           user_type_name: userTypeName,
           group_code: groupCode,
           birthday,
-          refresh_token: tokenRef,
         },
       });
 

@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtStrategyRefresh } from './strategy/jwt.strategy.refresh';
+import { CourseModule } from './course/course.module';
 import ApiResponses from './configs/DescriptionStatus';
 
 @Module({
@@ -15,6 +16,7 @@ import ApiResponses from './configs/DescriptionStatus';
       isGlobal: true,
     }),
     JwtModule.register({ global: true, secret: "" }),
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy, JwtStrategyRefresh, ApiResponses],

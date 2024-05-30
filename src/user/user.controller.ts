@@ -101,8 +101,8 @@ export class UserController {
   })
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('access-token')
-  postAddUser(@Req() req: any, @Res() res: Response, @Body() addUser: AddUser) {
-    return this.userService.postAddUsers(req, res, addUser);
+  postAddUser(@Res() res: Response, @Body() addUser: AddUser) {
+    return this.userService.postAddUsers(res, addUser);
   }
 
   // putUpdateUser
