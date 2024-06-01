@@ -8,6 +8,41 @@ import responseData from 'src/configs/response';
 export class CourseService {
   prisma = new PrismaClient();
 
+  async getCourseList(res: Response) {
+    const courseList = await this.prisma.courses.findMany({
+      include: { users: true, categories: true },
+    });
+
+    const format = courseList.map((course) => ({
+      courseId: course.course_id,
+      aliases: course.aliases,
+      courseName: course.course_name,
+      description: course.description,
+      views: course.views,
+      image: course.image,
+      groupCode: course.group_code,
+      createdDate: course.created_date,
+      numberOfStudents: course.number_of_students,
+      user: {
+        userId: course.users.user_id,
+        account: course.users.account,
+        fullName: course.users.full_name,
+        email: course.users.email,
+        phone: course.users.phone,
+        userTypeCode: course.users.user_type_code,
+        userTypeName: course.users.user_type_name,
+        groupCode: course.users.group_code,
+        birthday: course.users.birthday,
+      },
+      category: {
+        categoryId: course.categories.category_id,
+        categoryName: course.categories.category_name,
+      },
+    }));
+
+    responseData(res, 200, 'Proceed successfully', format);
+  }
+
   async addCourse(req: any, res: Response, addCourse: AddCourse) {
     const {
       aliases,

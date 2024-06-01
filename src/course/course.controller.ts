@@ -10,6 +10,12 @@ import { AuthGuard } from '@nestjs/passport';
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
+  // Get course list
+  @Get("/GetCourseList")
+  getCourseList(@Res() res: Response){
+    return this.courseService.getCourseList(res);
+  }
+
   // Add Course
   @Post("/AddCourse")
   @UseGuards(AuthGuard('jwt'))
