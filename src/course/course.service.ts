@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { AddCourse } from './dto/create-course.dto';
-import { UpdateCourse, UpdateCourseDto } from './dto/update-course.dto';
+import {
+  AddCourse,
+  CancelCourse,
+  EncrollCourse,
+  RegisterCourse,
+} from './dto/create-course.dto';
+import { UpdateCourse } from './dto/update-course.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
 
@@ -242,11 +247,107 @@ export class CourseService {
     responseData(res, 200, 'Delete course successfully', '');
   }
 
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
+  // ENCROLL COURSE
+  async enrollCourse(res: Response, encrollCourse: EncrollCourse) {
+    const { courseId, account } = encrollCourse;
+
+    const checkUser = await this.prisma.users.findFirst({
+      where: {
+        account,
+      },
+    });
+
+    if (!checkUser) {
+      return responseData(res, 404, 'Account not found', '');
+    }
+
+    const checkCourse = await this.prisma.course_enrollment.findFirst({
+      where: {
+        course_id: courseId,
+        user_id: checkUser.user_id,
+      },
+    });
+
+    if (!checkCourse) {
+      return responseData(res, 404, 'Course not found', '');
+    }
+
+    const putCourse = await this.prisma.course_enrollment.update({
+      where: {
+        enrollment_id: checkCourse.enrollment_id,
+      },
+      data: {
+        status: 2,
+      },
+      include: { users: true, courses: true },
+    });
+    return responseData(res, 200, 'Register course successfully', putCourse);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+  // SIGNUP COURSE
+  async registerCourse(
+    req: any,
+    res: Response,
+    registerCourse: RegisterCourse,
+  ) {
+    const { courseId, account } = registerCourse;
+
+    const checkUser = await this.prisma.users.findFirst({
+      where: {
+        account,
+      },
+    });
+
+    if (!checkUser) {
+      return responseData(res, 404, 'Account not found', '');
+    }
+
+    const checkCourse = await this.prisma.course_enrollment.findFirst({
+      where: {
+        course_id: courseId,
+        user_id: checkUser.user_id,
+      },
+    });
+
+    if (checkCourse) {
+      return responseData(res, 409, 'Course is registered', '');
+    }
+
+    const pushCourse = await this.prisma.course_enrollment.create({
+      data: {
+        created_date: new Date(),
+        status: 1,
+        user_id: checkUser.user_id,
+        course_id: courseId,
+      },
+      include: { users: true, courses: true },
+    });
+    return responseData(res, 200, 'Register course successfully', pushCourse);
+  }
+
+  // CANCEL COURSE
+  async cancelCourse(res: Response, cancelCourse: CancelCourse) {
+    const { courseId, account } = cancelCourse;
+
+    const checkUser = await this.prisma.users.findFirst({
+      where: {
+        account,
+      },
+    });
+
+    const checkCourse = await this.prisma.course_enrollment.findFirst({
+      where: {
+        course_id: courseId,
+        user_id: checkUser.user_id,
+      },
+    });
+
+    await this.prisma.course_enrollment.delete({
+      where: {
+        enrollment_id: checkCourse.enrollment_id,
+      },
+    });
+
+    return responseData(res, 200, 'Cancel course successfully', '');
   }
 }

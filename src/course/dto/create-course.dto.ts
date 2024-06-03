@@ -7,3 +7,18 @@ export class AddCourse {
   numberOfStudents: string;
   categoryId: string;
 }
+
+export class RegisterCourse {
+  courseId: number;
+  account: string;
+}
+
+export class EncrollCourse {
+  courseId: number;
+  account: string;
+}
+
+export class CancelCourse {
+  courseId: number;
+  account: string;
+}

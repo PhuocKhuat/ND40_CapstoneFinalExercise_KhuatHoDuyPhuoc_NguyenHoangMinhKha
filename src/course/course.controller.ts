@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
@@ -13,8 +12,13 @@ import {
   Put,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
-import { AddCourse } from './dto/create-course.dto';
-import { UpdateCourse, UpdateCourseDto } from './dto/update-course.dto';
+import {
+  AddCourse,
+  CancelCourse,
+  EncrollCourse,
+  RegisterCourse,
+} from './dto/create-course.dto';
+import { UpdateCourse } from './dto/update-course.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 // import { ApiTags } from '@nestjs/swagger';
@@ -100,13 +104,31 @@ export class CourseController {
     return this.courseService.deleteCourse(courseId, res);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.courseService.update(+id, updateCourseDto);
+  // ENCROLL COURSE
+  @Post('/EncrollCourse')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  enrollCourse(@Res() res: Response, @Body() encrollCourse: EncrollCourse) {
+    return this.courseService.enrollCourse(res, encrollCourse);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.courseService.remove(+id);
+  // SIGNUP COURSE
+  @Post('/RegisterCourse')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  registerCourse(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() registerCourse: RegisterCourse,
+  ) {
+    return this.courseService.registerCourse(req, res, registerCourse);
+  }
+
+  // CANCEL COURSE
+  @Post('/CancelCourse')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  cancelCourse(@Res() res: Response, @Body() cancelCourse: CancelCourse) {
+    return this.courseService.cancelCourse(res, cancelCourse);
   }
 }
