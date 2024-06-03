@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AddCourse } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
+import { UpdateCourse, UpdateCourseDto } from './dto/update-course.dto';
 import { PrismaClient } from '@prisma/client';
 import responseData from 'src/configs/response';
 
@@ -8,6 +8,7 @@ import responseData from 'src/configs/response';
 export class CourseService {
   prisma = new PrismaClient();
 
+  //GET COURSE LIST
   async getCourseList(res: Response) {
     const courseList = await this.prisma.courses.findMany({
       include: { users: true, categories: true },
@@ -43,6 +44,76 @@ export class CourseService {
     responseData(res, 200, 'Proceed successfully', format);
   }
 
+  //GET LIST CATALOG COURSE
+  async getCatalogCourse(res: Response) {
+    const catalogCourse = await this.prisma.categories.findMany();
+
+    const format = catalogCourse.map((category) => ({
+      categoryId: category.category_id,
+      categoryName: category.category_name,
+    }));
+
+    responseData(res, 200, 'Proceed successfully', format);
+  }
+
+  //GET COURSE BY CATALOG
+  async getCourseByCatalog(params: string, res: Response) {
+    const catagory_id = params;
+
+    const listCourse = await this.prisma.courses.findMany({
+      where: {
+        category_id: catagory_id,
+      },
+      include: { users: true },
+    });
+
+    responseData(res, 200, 'Proceed successfully', listCourse);
+  }
+
+  //GET COURSE BY ID COURSE
+  async getCourseById(params: string, res: Response) {
+    const course = parseInt(params, 10);
+    const courseInfo = await this.prisma.courses.findUnique({
+      where: {
+        course_id: course,
+      },
+      include: { users: true },
+    });
+    responseData(res, 200, 'Proceed successfully', courseInfo);
+  }
+
+  //GET USER BY COURSE ID
+  async getUserByCourseId(params: string, res: Response) {
+    const course = parseInt(params, 10);
+
+    const courseInfo = await this.prisma.courses.findMany({
+      where: {
+        course_id: course,
+      },
+      include: { users: true },
+    });
+    const userInfo = courseInfo.flatMap((course) => course.users);
+    responseData(res, 200, 'Proceed successfully', userInfo);
+  }
+
+  //GET COURSE PAGE LIST
+  async getCoursePageList(res: Response, pageId: string, pageSize: string) {
+    const startingIndex = (parseInt(pageId) - 1) * parseInt(pageSize);
+
+    const content = await this.prisma.courses.findMany({
+      take: parseInt(pageSize),
+      skip: startingIndex,
+    });
+
+    const numberOfUsers = await this.prisma.courses.count();
+
+    responseData(res, 200, 'Proceed successfully', {
+      content,
+      allPageNumbers: Math.ceil(numberOfUsers / parseInt(pageSize)),
+    });
+  }
+
+  // ADD COURSE
   async addCourse(req: any, res: Response, addCourse: AddCourse) {
     const {
       aliases,
@@ -117,12 +188,58 @@ export class CourseService {
     responseData(res, 200, 'Add course successfully', format);
   }
 
-  findAll() {
-    return `This action returns all course`;
+  // UPDATE COURSE
+  async updateCourse(res: Response, updateCourse: UpdateCourse) {
+    const {
+      courseId,
+      aliases,
+      courseName,
+      description,
+      views,
+      groupCode,
+      numberOfStudents,
+      categoryId,
+    } = updateCourse;
+
+    const checkCourse = await this.prisma.courses.findFirst({
+      where: {
+        course_name: courseName,
+      },
+    });
+
+    if (!checkCourse) {
+      return responseData(res, 404, 'Course does not exists', '');
+    }
+
+    const putCourse = await this.prisma.courses.update({
+      where: {
+        course_id: parseInt(courseId),
+      },
+      include: { categories: true },
+      data: {
+        aliases,
+        course_name: courseName,
+        description,
+        views: parseInt(views),
+        group_code: groupCode,
+        created_date: new Date(),
+        number_of_students: parseInt(numberOfStudents),
+        category_id: categoryId,
+      },
+    });
+
+    return responseData(res, 200, 'Update course successfully', putCourse);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
+  // DELETE COURSE
+  async deleteCourse(courseId: string, res: Response) {
+    await this.prisma.courses.delete({
+      where: {
+        course_id: parseInt(courseId),
+      },
+    });
+
+    responseData(res, 200, 'Delete course successfully', '');
   }
 
   update(id: number, updateCourseDto: UpdateCourseDto) {

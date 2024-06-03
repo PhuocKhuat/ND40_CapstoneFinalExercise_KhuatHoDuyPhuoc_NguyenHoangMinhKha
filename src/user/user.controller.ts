@@ -114,11 +114,10 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('access-token')
   udateUserInfo(
-    @Req() req: any,
     @Res() res: Response,
     @Body() updateUserInfo: UpdateUserInfo,
   ) {
-    return this.userService.updateUserInfo(req, res, updateUserInfo);
+    return this.userService.updateUserInfo(res, updateUserInfo);
   }
 
   // deleteUser
@@ -130,11 +129,10 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('access-token')
   deleteUser(
-    @Query('Account') account: string,
-    @Req() req: any,
+    @Query('UserId') userId: string,
     @Res() res: Response,
   ) {
-    return this.userService.deleteUser(account, req, res);
+    return this.userService.deleteUser(userId, res);
   }
 
   // Get list of unregistered users

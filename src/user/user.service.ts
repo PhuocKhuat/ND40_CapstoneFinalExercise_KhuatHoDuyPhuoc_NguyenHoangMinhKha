@@ -23,6 +23,7 @@ export class UserService {
     const userList = await this.prisma.users.findMany();
 
     const formatUserList = userList.map((user) => ({
+      userId: user.user_id,
       account: user.account,
       fullName: user.full_name,
       email: user.email,
@@ -342,12 +343,10 @@ export class UserService {
   }
 
   // updateUserInfo
-  async updateUserInfo(
-    req: any,
-    res: Response,
-    updateUserInfo: UpdateUserInfo,
-  ) {
+  async updateUserInfo(res: Response, updateUserInfo: UpdateUserInfo) {
     const {
+      userId,
+      account,
       fullName,
       email,
       phone,
@@ -358,11 +357,19 @@ export class UserService {
       birthday,
     } = updateUserInfo;
 
-    const { userId } = req.user;
+    const checkAccount = await this.prisma.users.findFirst({
+      where: {
+        account,
+      },
+    });
+
+    if (!checkAccount) {
+      return responseData(res, 404, 'Email does not exists', '');
+    }
 
     const updateUser = await this.prisma.users.update({
       where: {
-        user_id: userId,
+        user_id: parseInt(userId),
       },
       data: {
         full_name: fullName,
@@ -391,16 +398,11 @@ export class UserService {
   }
 
   // deleteUser
-  async deleteUser(account: string, req: any, res: Response) {
-    const user = await this.prisma.users.findFirst({
-      where: {
-        account: account,
-      },
-    });
+  async deleteUser(userId: string, res: Response) {
 
     const removeUser = await this.prisma.users.delete({
       where: {
-        user_id: user.user_id,
+        user_id: parseInt(userId),
       },
     });
 
