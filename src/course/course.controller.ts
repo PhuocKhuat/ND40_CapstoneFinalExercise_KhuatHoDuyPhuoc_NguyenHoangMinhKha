@@ -1,10 +1,11 @@
 import { UserService } from './../user/user.service';
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Patch, Param, Delete, Res, UseGuards, Req, Query } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { AddCourse } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { UpdateUserInfo } from 'src/user/dto/update-user.dto';
 // import { ApiTags } from '@nestjs/swagger';
 
 // @ApiTags('CourseManagement')
@@ -62,6 +63,25 @@ export class CourseController {
   @UseGuards(AuthGuard('jwt'))
   addCourse(@Req() req: any, @Res() res: Response, @Body() addCourse: AddCourse) {
     return this.courseService.addCourse(req, res, addCourse);
+  }
+
+  //Update course
+  @Put("/UpdateCourse")
+  @UseGuards(AuthGuard('jwt'))
+  updateCourse(@Req() req: any, @Res() res: Response,
+    @Body() updateCourse: UpdateCourseDto, @Body() updateUserInfo: UpdateUserInfo) {
+    return this.courseService.updateCourse(req, res, updateCourse)
+  }
+
+  //Delete Course
+  @Delete("/DeleteCourse")
+  @UseGuards(AuthGuard('jwt'))
+  deleteCourse(
+    @Query('course_id') account: number,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    return this.courseService.deleteCourse(account, req, res);
   }
 
   @Get()
