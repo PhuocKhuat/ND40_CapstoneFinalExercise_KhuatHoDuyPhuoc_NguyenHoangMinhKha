@@ -60,6 +60,12 @@ model courses {
   @@index([user_id], map: "user_id")
 }
 
+model user_type {
+  user_type_id   Int     @id @default(autoincrement())
+  user_type_code String? @db.VarChar(255)
+  user_type_name String? @db.VarChar(255)
+}
+
 model users {
   user_id           Int                 @id @default(autoincrement())
   account           String?             @db.VarChar(1000)
@@ -77,10 +83,4 @@ model users {
   comments          comments[]
   course_enrollment course_enrollment[]
   courses           courses[]
-}
-
-model user_type {
-  user_type_id   Int     @id @default(autoincrement())
-  user_type_code String? @db.VarChar(255)
-  user_type_name String? @db.VarChar(255)
 }

@@ -1,3 +1,4 @@
+import { Course } from './entities/course.entity';
 import { Injectable } from '@nestjs/common';
 import { AddCourse } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -8,6 +9,7 @@ import responseData from 'src/configs/response';
 export class CourseService {
   prisma = new PrismaClient();
 
+  //GET COURSE LIST
   async getCourseList(res: Response) {
     const courseList = await this.prisma.courses.findMany({
       include: { users: true, categories: true },
@@ -115,6 +117,68 @@ export class CourseService {
     };
 
     responseData(res, 200, 'Add course successfully', format);
+  }
+
+  //GET LIST CATALOG COURSE
+  async getCatalogCourse(res: Response){
+    const catalogCourse = await this.prisma.categories.findMany()
+
+    responseData(res, 200, "Proceed successfully", catalogCourse )
+  }
+
+  //GET COURSE BY CATALOG
+  async getCourseByCatalog(params: string, res: Response){
+    const catagory_id = params
+    const listCourse = await this.prisma.courses.findMany({
+      where:{
+        category_id: catagory_id,
+    }, 
+      include: { users: true}}
+  )
+    responseData(res, 200, "Proceed successfully", listCourse)
+  }
+
+  //GET COURSE BY ID COURSE
+  async getCourseById(params: string, res: Response){
+    let course = parseInt(params, 10);
+    let courseInfo = await this.prisma.courses.findUnique({
+      where:{
+        course_id: course,
+      },
+       include: { users: true}
+    })
+    responseData(res, 200, "Proceed successfully", courseInfo)
+  }
+
+  //GET USER BY COURSE ID
+  async getUserByCourseId(params:string, res: Response){
+    let course = parseInt(params, 10)
+
+    let courseInfo = await this.prisma.courses.findMany({
+      where:{
+        course_id: course
+      },
+      include: { users: true}
+    })
+    const userInfo = courseInfo.flatMap(course => course.users);
+    responseData(res, 200, "Proceed successfully", userInfo)
+  }
+
+  //GET COURSE PAGE LIST
+  async getCoursePageList(res: Response, pageId: string, pageSize: string) {
+    const startingIndex = (parseInt(pageId) - 1) * parseInt(pageSize);
+
+    const content = await this.prisma.courses.findMany({
+      take: parseInt(pageSize),
+      skip: startingIndex,
+    });
+
+    const numberOfUsers = await this.prisma.courses.count();
+
+    responseData(res, 200, 'Proceed successfully', {
+      content,
+      allPageNumbers: Math.ceil(numberOfUsers / parseInt(pageSize)),
+    });
   }
 
   findAll() {
