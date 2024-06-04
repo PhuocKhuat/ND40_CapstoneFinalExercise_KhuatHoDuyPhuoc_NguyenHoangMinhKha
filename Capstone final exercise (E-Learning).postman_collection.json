@@ -1,0 +1,639 @@
+{
+	"info": {
+		"_postman_id": "0a4d98be-889f-4a37-a3ac-dfdbcf78b449",
+		"name": "Capstone final exercise (E-Learning)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "32039120"
+	},
+	"item": [
+		{
+			"name": "GetUserList",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE3MTQ4MDY4NDUsImV4cCI6MTcxNTIzODg0NX0.vLOm9IbuVZWgcmtM5zvtAQbd5ERO1F6q3XEjKRV3Zeo",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{domain}}/api/UserManagement/GetUserList"
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserTypeList",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE3MTQ0OTQyMTQsImV4cCI6MTcxNDQ5NDUxNH0.r0PrvjB71lwD5Y4cwv0SctpNJ-Kv0tFgM_MNDR9Pah0",
+						"type": "text"
+					}
+				],
+				"url": "{{domain}}/api/UserManagement/GetUserTypeList"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"account\": \"Phuong\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/Login"
+			},
+			"response": []
+		},
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"account\": \"Phat\",\r\n    \"fullName\": \"Phat\",\r\n    \"password\": \"12345678\",\r\n    \"email\": \"phat@gmail.com\",\r\n    \"birthday\": \"01-01-2002\",\r\n    \"phone\": \"0942387549\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/Signup"
+			},
+			"response": []
+		},
+		{
+			"name": "RefreshToken",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUzOTczNTMsImV4cCI6MTc0Njk1NDk1M30.u5ja-XNTLjljWkwXcvY8YWLIDeAx5H-5HXbO5xJlkuQ"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE3MTQ0OTU3NDUsImV4cCI6MTcxNDkyNzc0NX0.pOVr6uPwTVZWdJpzSgdGappD_VdGAAnklJJ5P7VQ0ZA",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/RefreshToken"
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserInformation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUzNTYwOTcsImV4cCI6MTcxNTc4ODA5N30.UhNCdIDFJiJ7CBTzyI1RxeILtw18AM2GN1M9pLObz8M"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE3MTQ4MDY4NDUsImV4cCI6MTcxNTIzODg0NX0.vLOm9IbuVZWgcmtM5zvtAQbd5ERO1F6q3XEjKRV3Zeo",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": "{{domain}}/api/UserManagement/GetUserInformation"
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserPagedList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/api/UserManagement/GetUserPagedList?pageId=1&pageSize=10",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"UserManagement",
+						"GetUserPagedList"
+					],
+					"query": [
+						{
+							"key": "pageId",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSearchUsers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/api/UserManagement/SearchUsers?keyword=abc",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"UserManagement",
+						"SearchUsers"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "abc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddUser",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUyNDk3MzgsImV4cCI6MTcxNTY4MTczOH0.HNMT20yvey4B0kVEqkNpG0nxEe0Eji20Jkm1Q7KJTSM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"account\": \"Phot\",\r\n    \"fullName\": \"Phot\",\r\n    \"email\": \"phot@gmail.com\",\r\n    \"phone\": \"0948758714\",\r\n    \"password\": \"123\",\r\n    \"userTypeCode\": \"HV\",\r\n    \"userTypeName\": \"Học viên\",\r\n    \"groupCode\": \"GP01\",\r\n    \"birthday\": \"01-02-1991\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/AddUser"
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateUserInfo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUwOTcwMjQsImV4cCI6MTcxNTUyOTAyNH0.sSEkFIzZsESoPKQDHgzu1TbfpuwVNDCDCnd7_FcN4iM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": 15,\r\n    \"fullName\": \"Phuong Phi\",\r\n    \"email\": \"phuong@gmail.com\",\r\n    \"phone\": \"0948758714\",\r\n    \"password\": \"123456\",\r\n    \"userTypeCode\": \"GV\",\r\n    \"userTypeName\": \"Giáo vụ\",\r\n    \"groupCode\": \"GP01\",\r\n    \"birthday\": \"01-02-1991\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/UpdateUserInfo"
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUwOTcwMjQsImV4cCI6MTcxNTUyOTAyNH0.sSEkFIzZsESoPKQDHgzu1TbfpuwVNDCDCnd7_FcN4iM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/UserManagement/DeleteUser?UserId=27",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"UserManagement",
+						"DeleteUser"
+					],
+					"query": [
+						{
+							"key": "UserId",
+							"value": "27"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetListOfUnregisteredUsers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUzOTczNTMsImV4cCI6MTc0Njk1NDk1M30.u5ja-XNTLjljWkwXcvY8YWLIDeAx5H-5HXbO5xJlkuQ"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"maKhoaHoc\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/GetListOfUnregisteredUsers"
+			},
+			"response": []
+		},
+		{
+			"name": "GetListOfPendingReviewStudents",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"maKhoaHoc\": \"10\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/GetListOfPendingReviewStudents"
+			},
+			"response": []
+		},
+		{
+			"name": "GetListOfReviewedStudents",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTY4OTA5OTgsImV4cCI6MTcxNzMyMjk5OH0.IzTLyzNw18U-056VN1CZNZpAwPGyrBNkbbkUgP8vt8I"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"maKhoaHoc\": \"4\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/UserManagement/GetListOfReviewedStudents"
+			},
+			"response": []
+		},
+		{
+			"name": "GetCourseList",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "",
+						"variables": ""
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/GetCourseList"
+			},
+			"response": []
+		},
+		{
+			"name": "CourseCatalog",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "",
+						"variables": ""
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/CourseCatalog"
+			},
+			"response": []
+		},
+		{
+			"name": "CourseByCatalog",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "",
+						"variables": ""
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/CourseByCatalog/BackEnd"
+			},
+			"response": []
+		},
+		{
+			"name": "AddCourse",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTcwNDYwMTIsImV4cCI6MTcxNzQ3ODAxMn0.CAVw-fi0kZHYzvM2w_wjzAgfw1SJFHFVIXr0pYcnOtI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"aliases\": \"Next_JS\",\r\n    \"courseName\": \"Next_JS\",\r\n    \"description\": \"This course very good\",\r\n    \"views\": \"900\",\r\n    \"groupCode\": \"GP01\",\r\n    \"numberOfStudents\": \"900\",\r\n    \"categoryId\": \"FrontEnd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/AddCourse"
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateCourse",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUwOTcwMjQsImV4cCI6MTcxNTUyOTAyNH0.sSEkFIzZsESoPKQDHgzu1TbfpuwVNDCDCnd7_FcN4iM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"courseId\": \"15\",\r\n    \"aliases\": \"Next_JS\",\r\n    \"courseName\": \"Next_JS\",\r\n    \"description\": \"This course very good\",\r\n    \"views\": \"901\",\r\n    \"groupCode\": \"GP01\",\r\n    \"numberOfStudents\": \"900\",\r\n    \"categoryId\": \"FrontEnd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/UpdateCourse"
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteCourse",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTUwOTcwMjQsImV4cCI6MTcxNTUyOTAyNH0.sSEkFIzZsESoPKQDHgzu1TbfpuwVNDCDCnd7_FcN4iM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/CourseManagement/DeleteCourse?CourseId=16",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"CourseManagement",
+						"DeleteCourse"
+					],
+					"query": [
+						{
+							"key": "CourseId",
+							"value": "16"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterCourse",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTcwNDYwMTIsImV4cCI6MTcxNzQ3ODAxMn0.CAVw-fi0kZHYzvM2w_wjzAgfw1SJFHFVIXr0pYcnOtI",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"courseId\": 6,\r\n    \"account\": \"Phuong\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/RegisterCourse"
+			},
+			"response": []
+		},
+		{
+			"name": "EncrollCourse",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTcwNDYwMTIsImV4cCI6MTcxNzQ3ODAxMn0.CAVw-fi0kZHYzvM2w_wjzAgfw1SJFHFVIXr0pYcnOtI",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"courseId\": 9,\r\n    \"account\": \"Phuong\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/EncrollCourse"
+			},
+			"response": []
+		},
+		{
+			"name": "CancelCourse",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTc0MDgyNTcsImV4cCI6MTcxNzg0MDI1N30.AMNiXxQWKVi80Js4z4dQnLpA-g_L1MfQj6oEvloapTw"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJpYXQiOjE3MTcwNDYwMTIsImV4cCI6MTcxNzQ3ODAxMn0.CAVw-fi0kZHYzvM2w_wjzAgfw1SJFHFVIXr0pYcnOtI",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"courseId\": 6,\r\n    \"account\": \"Phuong\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{domain}}/api/CourseManagement/CancelCourse"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "domain",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

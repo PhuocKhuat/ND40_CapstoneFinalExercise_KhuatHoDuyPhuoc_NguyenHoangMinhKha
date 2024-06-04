@@ -71,3 +71,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+// Steps to create a project:
+// The first step, import database in table plus.
+// The second step, enter four prisma command (yarn add prisma @prisma/client, yarn prisma init, yarn prisma db pull, yarn prisma generate).
+// The third step, edit the database inforamation and edit the environment variable in the .env file.
+// The four step, enter yarn start:dev.
